@@ -10,13 +10,16 @@ class EstadoController extends GetxController {
   RxBool encontrouCep = false.obs;
   RxBool isLoading = false.obs;
   RxBool cepIsEmpty = true.obs;
+  RxBool errorEstado = false.obs;
+
+  RxString msgErro = ''.obs;
 
   Estado? estado;
 
   final cepController = TextEditingController();
 
   consultaCep() async {
-    isLoading = true.obs;
+    isLoading.value = true;
     encontrouCep.value = false;
     estado = null;
 
@@ -29,8 +32,6 @@ class EstadoController extends GetxController {
 
       response = await http.get(Uri.parse(url));
 
-
-
       if(response.statusCode == 200) {
         Map<String, dynamic> retorno = json.decode(response.body);
 
@@ -40,15 +41,15 @@ class EstadoController extends GetxController {
       }
 
       if(response.statusCode == 400) {
-        print('Cep Invalido');
+        encontrouCep.value = false;
         estado = null;
-        throw 'CEP inválido!';
+        throw 'O CEP digitado está inválido!';
       }
 
     } catch (e) {
-      print('catch ${e.toString()}');
+      msgErro.value = e.toString();
     } finally {
-      isLoading = false.obs;
+      isLoading.value = false;
     }
   }
 
@@ -61,5 +62,16 @@ class EstadoController extends GetxController {
 
     cepIsEmpty.value = false;
     return;
+  }
+
+  void limparCampos() {
+    encontrouCep.value = false;
+    isLoading.value = false;
+    cepIsEmpty.value = true;
+    errorEstado.value = false;
+
+    cepController.text = "";
+
+    estado = null;
   }
 }

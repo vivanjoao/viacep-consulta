@@ -1,6 +1,6 @@
 plugins {
-    id("com.android.application")
-    id("kotlin-android")
+    id("com.viacep_consulta.application")
+    id("kotlin-viacep_consulta")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }

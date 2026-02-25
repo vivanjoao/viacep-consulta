@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:teste_estado/controller/estado_controller.dart';
-import 'package:teste_estado/model/estado.dart';
+
 
 class EstadoView extends StatelessWidget {
-  EstadoView({super.key});
+  const EstadoView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -30,7 +30,7 @@ class EstadoView extends StatelessWidget {
               Obx(
                 () => Visibility(
                   visible: estadoController.isLoading.value ? true : false,
-                  child: Container(child: CircularProgressIndicator()),
+                  child: CircularProgressIndicator(),
                 ),
               ),
 
@@ -40,13 +40,14 @@ class EstadoView extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Container(
+                    SizedBox(
                       width: constraints.maxWidth * 0.6,
                       child: TextFormField(
                         keyboardType: TextInputType.number,
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
-                            borderSide: BorderSide(width: 20),
+                            borderSide: BorderSide(width: 24),
+                            borderRadius: BorderRadius.circular(12),
                           ),
                           //controller
                         ),
@@ -55,24 +56,47 @@ class EstadoView extends StatelessWidget {
                       ),
                     ),
 
-                    Padding(padding: EdgeInsets.all(4)),
+                    Padding(padding: EdgeInsets.all(6)),
 
                     Obx(
                       () => Opacity(
-                        opacity:
-                            estadoController.cepIsEmpty.value
-                                ? 0.4
-                                : 1,
+                        opacity: estadoController.cepIsEmpty.value ? 0.4 : 1,
                         child: GestureDetector(
                           onTap: () async {
                             await estadoController.consultaCep();
 
-                            // estadoController.encontrouCep.value =
-                            //     !estadoController.encontrouCep.value;
+                            if (!estadoController.encontrouCep.value) {
+                              Get.dialog(
+                                barrierDismissible: false,
+                                AlertDialog(
+                                  backgroundColor: Colors.white,
+                                  title: const Text(
+                                    "Ocorreu um erro",
+                                    style: TextStyle(
+                                      //fontWeight: FontWeight.bold,
+                                      fontSize: 28,
+                                    ),
+                                  ),
+                                  content: Text(
+                                    estadoController.msgErro.value,
+                                    style: TextStyle(fontSize: 16),
+                                  ),
+                                  actions: [
+                                    FilledButton(
+                                      onPressed: () {
+                                        estadoController.limparCampos;
+                                        Get.back();
+                                      },
+                                      child: const Text("Fechar"),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
                           },
                           child: Container(
-                              color: Colors.blueGrey[300],
-                              child: Icon(Icons.search, size: 36,)
+                            color: Colors.blueGrey[300],
+                            child: Icon(Icons.search, size: 36),
                           ),
                         ),
                       ),
@@ -92,34 +116,74 @@ class EstadoView extends StatelessWidget {
                     visible: estadoController.encontrouCep.value ? true : false,
                     child: Container(
                       width: constraints.maxWidth * 0.7,
-                      height: constraints.maxHeight * 0.7,
-                      color: Colors.blueGrey[300],
+                      padding: const EdgeInsets.fromLTRB(10,8,10,8),
+                      color: Colors.transparent,
                       child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         spacing: 12,
                         children: [
-                          Text(
-                            'Informações da Busca',
-                            style: TextStyle(
-                              fontSize: 32,
-                              fontWeight: FontWeight.bold,
+                          Center(
+                            child: Text(
+                              'Informações da Busca',
+                              style: TextStyle(
+                                fontSize: 32,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
+
+                          Divider(
+                            color: Colors.black,
+                            height: 2,
+                            thickness: 4,
+                          ),
+
                           Text(
                             'CEP: ${estadoController.estado?.cep ?? ''}',
                             style: TextStyle(fontSize: 24),
                           ),
+
+                          Divider(
+                            color: Colors.black,
+                            height: 1,
+                            thickness: 3,
+                          ),
+
                           Text(
                             'Logradouro: ${estadoController.estado?.logradouro ?? ''}',
                             style: TextStyle(fontSize: 24),
                           ),
+
+                          Divider(
+                            color: Colors.black,
+                            height: 1,
+                            thickness: 3,
+                          ),
+
+
                           Text(
                             'Complemento: ${estadoController.estado?.complemento ?? ''}',
                             style: TextStyle(fontSize: 24),
                           ),
+
+                          Divider(
+                            color: Colors.black,
+                            height: 1,
+                            thickness: 3,
+                          ),
+
+
                           Text(
                             'Bairro: ${estadoController.estado?.bairro ?? ''}',
                             style: TextStyle(fontSize: 24),
                           ),
+
+                          Divider(
+                            color: Colors.black,
+                            height: 1,
+                            thickness: 3,
+                          ),
+
                           Text(
                             'Estado: ${estadoController.estado?.estado ?? ''}',
                             style: TextStyle(fontSize: 24),
